@@ -1,0 +1,53 @@
+name: Auto-Merge nach main
+
+# Claude-Code-Sitzungen arbeiten auf Branches "claude/...".
+# Sobald dort gepusht wird, werden Tests + Build ausgeführt, der Branch in main
+# übernommen (Fast-Forward, sonst Merge-Commit) und danach gelöscht.
+# So landet alles automatisch in main – ohne Pull Request und ohne Aufräumen.
+on:
+  push:
+    branches: ['claude/**']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-merge-main
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: In main übernehmen und Branch löschen
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B main origin/main
+          if ! git merge --no-edit "origin/$BRANCH"; then
+            echo "::error::Merge-Konflikt zwischen $BRANCH und main. Bitte in der Claude-Sitzung 'git merge origin/main' ausführen, Konflikte lösen und erneut pushen."
+            exit 1
+          fi
+          git push origin main
+          git push origin --delete "$BRANCH" || true
+
+  deploy:
+    needs: merge
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

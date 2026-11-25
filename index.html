@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1210" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Kalorien, Makros, Wasser, Aktivitäten, Gewicht und Intervallfasten tracken." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="NutriLog" />
+    <link rel="icon" type="image/svg+xml" href="./icons/favicon.svg" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <title>NutriLog</title>
+    <script>
+      // Apply theme before first paint to avoid a flash.
+      try {
+        var t = localStorage.getItem('theme') || 'system'
+        var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.classList.toggle('dark', dark)
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
