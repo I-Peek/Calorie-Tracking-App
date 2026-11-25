@@ -38,7 +38,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Hinweis, falls Pages nicht aktiviert ist
         if: steps.pages.outcome != 'success'
-        run: echo "::warning::GitHub Pages ist nicht aktiviert. Settings → Pages → Source: 'GitHub Actions' (bei privaten Repos ist dafür GitHub Pro nötig). Build und Tests waren erfolgreich."
+        run: |
+          echo "::warning::GitHub Pages ist nicht aktiviert. Settings → Pages → Source: 'GitHub Actions' (bei privaten Repos ist dafür GitHub Pro nötig). Build und Tests waren erfolgreich."
       - uses: actions/upload-pages-artifact@v3
         if: steps.pages.outcome == 'success'
         with:
